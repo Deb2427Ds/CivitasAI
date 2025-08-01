@@ -1,6 +1,7 @@
 import streamlit as st
 import speech_recognition as sr
 from plyer import notification
+from moviepy.editor import VideoFileClip
 import tempfile
 import os
 
@@ -23,15 +24,13 @@ abusive_keywords = [
     "weirdo", "wannabe", "doormat", "bootlicker", "simp", "twat", "hoe", "dumbfuck"
 ]
 
-# Abuse check function
 def is_abusive(text):
     found = [word for word in abusive_keywords if word in text.lower()]
     return found
 
-# Audio transcription function
-def transcribe_audio(audio_file):
+def transcribe_audio(audio_path):
     recognizer = sr.Recognizer()
-    with sr.AudioFile(audio_file) as source:
+    with sr.AudioFile(audio_path) as source:
         audio = recognizer.record(source)
     try:
         return recognizer.recognize_google(audio)
@@ -40,15 +39,12 @@ def transcribe_audio(audio_file):
     except sr.RequestError:
         return "Could not connect to Google Speech Recognition service."
 
-# System notification function
 def send_abuse_alert():
     st.toast("⚠️ Abusive content detected!")
 
-
-# Streamlit UI
 st.title("🛡️ Real-Time Abuse Detection")
 
-# Text input section
+# Text input
 st.subheader("📝 Text Input")
 text_input = st.text_area("Enter your message:")
 if st.button("Check Text"):
@@ -59,18 +55,29 @@ if st.button("Check Text"):
     else:
         st.success("✅ No abusive keywords detected.")
 
-# Audio input section
-st.subheader("🎤 Upload Voice (.wav)")
-audio_file = st.file_uploader("Choose a .wav audio file", type=["wav"])
-if audio_file is not None:
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
-        tmp_file.write(audio_file.read())
-        tmp_path = tmp_file.name
+# Audio or video upload
+st.subheader("🎥 Upload Audio/Video (.wav or .mp4)")
+uploaded_file = st.file_uploader("Choose a file", type=["wav", "mp4"])
 
-    st.audio(audio_file, format="audio/wav")
+if uploaded_file is not None:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
+        tmp.write(uploaded_file.read())
+        input_path = tmp.name
 
-    if st.button("Analyze Audio"):
-        transcribed = transcribe_audio(tmp_path)
+    if uploaded_file.name.endswith(".mp4"):
+        st.video(uploaded_file)
+        st.info("Extracting audio from video...")
+        audio_path = input_path.replace(".mp4", ".wav")
+        video_clip = VideoFileClip(input_path)
+        video_clip.audio.write_audiofile(audio_path, codec='pcm_s16le')  # Save as WAV
+        video_clip.close()
+    else:
+        st.audio(uploaded_file)
+        audio_path = input_path
+
+    if st.button("Analyze"):
+        st.write("Transcribing...")
+        transcribed = transcribe_audio(audio_path)
         st.write(f"**Transcribed Text:** {transcribed}")
         abuse = is_abusive(transcribed)
         if abuse:
@@ -79,4 +86,6 @@ if audio_file is not None:
         else:
             st.success("✅ No abusive keywords detected.")
 
-        os.remove(tmp_path)
+        os.remove(input_path)
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
