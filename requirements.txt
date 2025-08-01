@@ -1,3 +1,5 @@
 streamlit
-SpeechRecognition
-plyer
+transformers
+torch
+moviepy
+pydub
