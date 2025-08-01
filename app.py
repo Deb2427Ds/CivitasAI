@@ -8,7 +8,38 @@ import os
 sentiment_analyzer = pipeline("sentiment-analysis")
 
 # Define abusive keywords (you can expand this)
-abusive_keywords = ["abuse", "hate", "stupid", "idiot", "fool"]
+abusive_keywords = [
+    # General insults
+    "idiot", "stupid", "dumb", "moron", "loser", "freak", "jerk", "creep", "psycho",
+    "pathetic", "clown", "fool", "trash", "worthless", "useless", "nonsense", "dirtbag",
+
+    # Profanity / curse words
+    "fuck", "shit", "bitch", "asshole", "dick", "bastard", "slut", "whore", "cunt",
+    "prick", "piss", "damn", "hell", "fucked", "fucker", "bullshit", "motherfucker",
+
+    # Hate speech / slurs (detection purposes only)
+    "racist", "nazi", "terrorist", "bigot", "homophobe", "xenophobe", "pervert", "rapist",
+    "pedo", "pedophile", "retard", "faggot", "tranny", "chink", "spic", "nigger", "kike", "dyke",
+
+    # Threatening / violent language
+    "kill you", "go die", "beat you", "burn you", "i'll hurt you", "stab you", "shoot you",
+    "break your", "punch you", "rip you", "i'll destroy you", "you're dead", "cut you",
+
+    # Physical actions / assault indicators
+    "slap", "kick", "punch", "hit", "smack", "choke", "strangle", "throw", "bite", "scratch",
+    "push", "shove", "whip", "break", "cut", "stab", "burn", "bleed", "drag", "pin down",
+
+    # Bullying / mental abuse
+    "nobody likes you", "you're worthless", "go away", "you're a mistake", "you're fat",
+    "ugly", "disgusting", "cringe", "you should die", "why don't you die", "drown yourself",
+    "end your life", "nobody cares", "shut up", "no one asked", "get lost", "stay away",
+
+    # Coded / disguised abuse
+    "kys", "die pls", "fatass", "lard", "airhead", "sissy", "maniac", "crazy", "nutcase",
+    "weirdo", "wannabe", "doormat", "bootlicker", "simp", "twat", "hoe", "dumbfuck"
+]
+
+
 
 def is_abusive(text):
     found = [word for word in abusive_keywords if word in text.lower()]
