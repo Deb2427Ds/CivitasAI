@@ -42,12 +42,8 @@ def transcribe_audio(audio_file):
 
 # System notification function
 def send_abuse_alert():
-    notification.notify(
-        title='⚠ Abuse Detected!',
-        message='Abusive language or threat identified.',
-        app_name='Live Abuse Detection App',
-        timeout=5
-    )
+    st.toast("⚠️ Abusive content detected!")
+
 
 # Streamlit UI
 st.title("🛡️ Real-Time Abuse Detection")
