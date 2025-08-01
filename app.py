@@ -94,6 +94,16 @@ if audio_file is not None:
             st.error(f"⚠️ Abusive language detected: {', '.join(abuse)}")
         else:
             st.success("✅ No abusive keywords found.")
+from plyer import notification
+
+def send_abuse_alert():
+    notification.notify(
+        title='⚠ Abuse Detected!',
+        message='Abusive language or threat identified in real-time input.',
+        app_name='Live Abuse Detection App',
+        timeout=5  # seconds
+    )
 
     # Clean up temp file
     os.remove(tmp_path)
+    
