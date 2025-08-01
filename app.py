@@ -23,10 +23,12 @@ abusive_keywords = [
     "weirdo", "wannabe", "doormat", "bootlicker", "simp", "twat", "hoe", "dumbfuck"
 ]
 
+# Abuse check function
 def is_abusive(text):
     found = [word for word in abusive_keywords if word in text.lower()]
     return found
 
+# Audio transcription function
 def transcribe_audio(audio_file):
     recognizer = sr.Recognizer()
     with sr.AudioFile(audio_file) as source:
@@ -38,10 +40,11 @@ def transcribe_audio(audio_file):
     except sr.RequestError:
         return "Could not connect to Google Speech Recognition service."
 
+# System notification function
 def send_abuse_alert():
     notification.notify(
         title='⚠ Abuse Detected!',
-        message='Abusive language or threat identified in real-time input.',
+        message='Abusive language or threat identified.',
         app_name='Live Abuse Detection App',
         timeout=5
     )
@@ -49,7 +52,7 @@ def send_abuse_alert():
 # Streamlit UI
 st.title("🛡️ Real-Time Abuse Detection")
 
-# Text check
+# Text input section
 st.subheader("📝 Text Input")
 text_input = st.text_area("Enter your message:")
 if st.button("Check Text"):
@@ -60,7 +63,7 @@ if st.button("Check Text"):
     else:
         st.success("✅ No abusive keywords detected.")
 
-# Audio check
+# Audio input section
 st.subheader("🎤 Upload Voice (.wav)")
 audio_file = st.file_uploader("Choose a .wav audio file", type=["wav"])
 if audio_file is not None:
