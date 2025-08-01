@@ -5,3 +5,4 @@ speechrecognition
 pydub
 librosa
 soundfile
+plyer
